@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+    layout:decorator="/index">
+<head>
+<title>ace_iframepage_template</title>
+</head>
+<div layout:fragment="pagePluginStyles"></div>
+<div layout:fragment="inlineStyles"></div>
+
+<div layout:fragment="iframePage">
+	<div style="width:100px;height:100px;background: red"></div>
+</div>
+
+<div layout:fragment="pagePluginScripts"></div>
+<div layout:fragment="inlineScripts">
+<script type="text/javascript">
+	alert("iframe");
+</script>
+</div>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+>
+<head>
+<meta charset="utf-8" />
+<title>Dashboard - Ace Admin</title>
+<base th:href="@{${basePath}}" />
+<link rel="stylesheet" th:href="@{${basePath}+'ace_res/assets/css/bootstrap.css'}" />
+<link rel="stylesheet" th:href="@{${basePath}+'ace_res/assets/css/font-awesome.css'}" />
+<!-- page specific plugin styles -->
+<div layout:fragment="pagePluginStyles"></div>
+<link rel="stylesheet" th:href="@{${basePath}+'ace_res/assets/css/ace-fonts.css'}" />
+<link rel="stylesheet" th:href="@{${basePath}+'ace_res/assets/css/ace.css'}"/>
+
+<!-- inline styles related to this page -->
+<style>
+.iframe_context {
+    width: 100%;
+    height: 800px;
+    overflow: hidden;
+    border: hidden;
+}
+</style>
+<div layout:fragment="inlineStyles"></div>
+
+<script th:src="@{${basePath}+'ace_res/assets/js/ace-extra.js'}"></script>
+</head>
+
+<body class="no-skin" style="background: white">
+<!-- 顶部信息栏 -->
+<div id="navbar" class="navbar navbar-default">
+    <div class="navbar-container" id="navbar-container">
+      <!-- 标题 -->
+      <div class="navbar-header pull-left">
+        <a href="#" class="navbar-brand">
+          <small>
+           配置中心
+            <small>
+              <cite th:text="${#ctx.servletContext.getAttribute('version')}"></cite>
+            </small>
+          </small>
+        </a>
+      </div>
+    </div> <!-- /#navbar-container -->
+  </div> <!-- /#navbar -->
+
+  <div class="main-container" id="main-container">
+    <div class="main-content">
+      <div class="main-content-inner">
+        <!-- 面包屑 -->
+        <div class="breadcrumbs" id="breadcrumbs">
+          <ul class="breadcrumb">
+            <li>
+              <i class="ace-icon fa fa-home home-icon"></i>
+              <a href="#">Home</a>
+            </li>
+            <li class="active">Dashboard</li>
+          </ul> <!-- /.breadcrumb -->
+          <div class="nav-search" id="nav-search">
+            <form class="form-search">
+              <span class="input-icon">
+                <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                <i class="ace-icon fa fa-search nav-search-icon"></i>
+              </span>
+            </form>
+          </div> <!-- /.nav-search -->
+        </div> <!-- /.breadcrumbs -->
+
+        <div class="page-content">
+          <div layout:fragment="iframePage" class="iframe_context"></div>
+        </div> <!-- /.page-content -->
+      </div>
+    </div> <!-- /.main-content -->
+  </div> <!-- /.main-container -->
+
+  <!-- basic scripts -->
+  <script th:inline="javascript">
+  /*<![CDATA[*/
+  try {
+      ace.settings.check('main-container', 'fixed');
+      ace.settings.check('navbar', 'fixed');
+      ace.settings.check('breadcrumbs', 'fixed');
+  } catch (e) {
+      console.log(e);
+  }
+  var $basePath = /*[[${basePath}]]*/'default';
+  window.jQuery || document.write("<script src='"+$basePath+"ace_res/assets/js/jquery.js' />"+ "<"+"/script>");
+  /*]]>*/
+  </script>
+  
+  <!-- page specific plugin scripts -->
+  <script th:src="@{${basePath}+'js/service/IndexService.js'}"></script>
+  <script th:src="@{${basePath}+'js/util/Poller.js'}"></script>
+  <div layout:fragment="pagePluginScripts"></div>
+
+  <script th:src="@{${basePath}+'js/util/StringUtil.js'}"/>
+  <script th:src="@{${basePath}+'js/util/DateUtil.js'}"/>
+  <script th:src="@{${basePath}+'js/util/CollectionUtil.js'}"/>
+  <script th:src="@{${basePath}+'js/util/ConcurrentUtil.js'}"/>
+  <script th:src="@{${basePath}+'js/util/DomUtil.js'}"/>
+  <script th:src="@{${basePath}+'js/util/CSSloader.js'}"/>
+  <script th:src="@{${basePath}+'js/util/JSloader.js'}"/>
+  <script th:src="@{${basePath}+'js/util/PermissionController.js'}"/>
+  <script th:src="@{${basePath}+'js/util/FuncSwitch.js'}"/>
+  <script th:src="@{${basePath}+'js/util/ResponseUtil.js'}"/>
+  <script th:src="@{${basePath}+'js/view/Menu.js'}"/>
+  <script th:src="@{${basePath}+'ace_res/assets/js/bootstrap.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/jquery-ui.custom.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/jquery.ui.touch-punch.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/jquery.easypiechart.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/jquery.sparkline.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/flot/jquery.flot.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/flot/jquery.flot.pie.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/flot/jquery.flot.resize.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/bootbox.js'}"></script>
+
+  <!-- ace scripts -->
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.scroller.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.colorpicker.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.fileinput.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.typeahead.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.wysiwyg.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.spinner.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.treeview.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.wizard.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.aside.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.ajax-content.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.touch-drag.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.submenu-hover.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.widget-box.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.settings.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.settings-rtl.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.settings-skin.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.widget-on-reload.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.searchbox-autocomplete.js'}"></script>
+
+  <!-- inline scripts related to this page -->
+  <div layout:fragment="inlineScripts"></div>
+
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/elements.onpage-help.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/assets/js/ace/ace.onpage-help.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/docs/assets/js/rainbow.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/docs/assets/js/language/generic.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/docs/assets/js/language/html.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/docs/assets/js/language/css.js'}"></script>
+  <script th:src="@{${basePath}+'ace_res/docs/assets/js/language/javascript.js'}"></script>
+</body>
+</html>

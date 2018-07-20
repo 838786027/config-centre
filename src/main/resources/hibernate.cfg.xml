@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hibernate-configuration xmlns="http://www.hibernate.org/xsd/orm/cfg">
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
+        <property name="hibernate.connection.url">jdbc:sqlite::resource:config-centre.db</property>
+        <property name="hibernate.connection.username"></property>
+        <property name="hibernate.connection.password"></property>
+
+        <property name="dialect">sqlite.SQLiteDialect</property>
+
+        <!-- C3P0数据库连接池 -->
+        <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="hibernate.c3p0.min_size">2</property>
+        <property name="hibernate.c3p0.max_size">4</property>
+        <property name="hibernate.c3p0.timeout">5000</property>
+        <property name="hibernate.c3p0.max_statements">10</property>
+        <property name="hibernate.c3p0.idle_test_period">30000</property>
+        <property name="hibernate.c3p0.acquire_increment">2</property>
+
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">false</property>
+        <!-- <property name="hibernate.hbm2ddl.auto">create</property> -->
+
+        <mapping class="com.cpphot.domain.DO.ConfigDO"/>
+        <mapping class="com.cpphot.domain.DO.ProjectDO"/>
+    </session-factory>
+</hibernate-configuration>

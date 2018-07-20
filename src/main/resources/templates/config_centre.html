@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+    layout:decorator="/index">
+<head>
+<title>配置中心</title>
+</head>
+<div layout:fragment="pagePluginStyles"></div>
+<div layout:fragment="inlineStyles"></div>
+
+<div layout:fragment="iframePage">
+	<div style="width:100px;height:100px;background: red"></div>
+</div>
+
+<div layout:fragment="pagePluginScripts">
+    <script th:src="@{${basePath}+'js/service/ProjectService.js'}"/>
+</div>
+<div layout:fragment="inlineScripts">
+<script type="text/javascript">
+	$(function () {
+        init();
+    });
+
+	function init() {
+        initComponent();
+        initEvent();
+        var projectService = new ProjectService();
+        projectService.list(function (data) {
+            alert("yes");
+            console.log(data);
+        });
+    }
+
+    function initComponent() {
+
+    }
+
+    function initEvent() {
+
+    }
+</script>
+</div>
+</html>
