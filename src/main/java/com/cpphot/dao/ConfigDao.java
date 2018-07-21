@@ -9,11 +9,4 @@ import java.util.List;
 
 @Repository
 public class ConfigDao extends BaseSQLiteDao<ConfigDO> {
-    public List<ConfigDO> listByProject(String projectName, String projectVersion) {
-        MySQLQueryParam queryParam = new MySQLQueryParam();
-        queryParam.setWhere("project_name=:project_name and project_version=:project_version")
-                .addParam("project_name", projectName)
-                .addParam("project_version", projectVersion);
-        return listByHQL(queryParam);
-    }
 }

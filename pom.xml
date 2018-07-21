@@ -53,6 +53,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+        <!-- ace-view -->
+        <dependency>
+            <groupId>com.gosun</groupId>
+            <artifactId>ace-view</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>

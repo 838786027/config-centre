@@ -14,7 +14,8 @@
 /*global jQuery */
 
 /**
- * 添加过滤器 -> 删除功能
+ * 1.添加过滤器 -> 删除功能
+ * 2.行内编辑添加editData
  * @author caixiaopeng
  */
 (function ($) {
@@ -5621,7 +5622,6 @@ var xmlJsonClass = {
 				$actionsDiv.find("div.ui-inline-edit,div.ui-inline-del").show();
 				$actionsDiv.find("div.ui-inline-save,div.ui-inline-cancel").hide();
 			};
-
 		if (cm.formatoptions !== undefined) {
 			op = $.extend(op,cm.formatoptions);
 		}
@@ -5648,13 +5648,26 @@ var xmlJsonClass = {
 		};
 		switch(act)
 		{
-			case 'edit':
-				$grid.jqGrid('editRow', rid, actop);
+            case 'edit':
+                // note: 功能点2
+                // note: 实际上在这里传入的extraparam是无效的，实际提交时会重新执行这个方法，但act是save
+			    if (op.editOptions !== undefined && op.editOptions.editData !== undefined) {
+                    for (var key in op.editOptions.editData) {
+                        actop.extraparam[key] = op.editOptions.editData[key];
+                    }
+                }
+                $grid.jqGrid('editRow', rid, actop);
 				$actionsDiv.find("div.ui-inline-edit,div.ui-inline-del").hide();
 				$actionsDiv.find("div.ui-inline-save,div.ui-inline-cancel").show();
 				$grid.triggerHandler("jqGridAfterGridComplete");
 				break;
 			case 'save':
+                // note: 功能点2
+                if (op.editOptions !== undefined && op.editOptions.editData !== undefined) {
+                    for (var key in op.editOptions.editData) {
+                        actop.extraparam[key] = op.editOptions.editData[key];
+                    }
+                }
 				if ($grid.jqGrid('saveRow', rid, actop)) {
 					$actionsDiv.find("div.ui-inline-edit,div.ui-inline-del").show();
 					$actionsDiv.find("div.ui-inline-save,div.ui-inline-cancel").hide();
@@ -7513,7 +7526,7 @@ $.jgrid.extend({
                     if (mustReload !== false) {
                         $($t).trigger("reloadGrid",[{page:1}]);
                         if (confirm("确认删除吗")) {
-                            // TODO 重复代码，和populate重复
+                            // note: 功能点1
                            var dt = "json";
                             $t.p.postData.oper = "del-by-filters";
                             $.ajax($.extend({
@@ -9360,7 +9373,6 @@ $.jgrid.extend({
 	editRow : function(rowid,keys,oneditfunc,successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc) {
 		// Compatible mode old versions
 		var o={}, args = $.makeArray(arguments).slice(1);
-
 		if( $.type(args[0]) === "object" ) {
 			o = args[0];
 		} else {

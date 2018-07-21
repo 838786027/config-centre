@@ -25,7 +25,11 @@
  *   "rowNum":10,
  *   "url":"xxx",
  *   "editUrl":"xxx",
- *   "postData":{"xxx":"xxx"},
+ *   "extraParam": {"xxx":"xxx"},
+ *   "postExtraParam": {"xxx":"xxx"},
+ *   "editExtraParam": {"xxx":"xxx"},
+ *   "delExtraParam": {"xxx":"xxx"},
+ *   "addExtraParam": {"xxx":"xxx"},
  *   "listener":{
  *          "loadComplete" : "xxx"
  *    }
@@ -49,7 +53,11 @@ function BaseTable(args) {
     this._rowNum = args["rowNum"] || 10;
     this._url = args["url"];
     this._editUrl = args["editUrl"];
-    this._postData = args["postData"] == null ? {} : args["postData"];
+    args["extraParam"] = args["extraParam"] == null ? {} : args["extraParam"];
+    this._postExtraParam = $.extend(args["extraParam"], args["postExtraParam"] == null ? {} : args["postExtraParam"]);
+    this._editExtraParam = $.extend(args["extraParam"], args["editExtraParam"] == null ? {} : args["editExtraParam"]);
+    this._delExtraParam = $.extend(args["extraParam"], args["delExtraParam"] == null ? {} : args["delExtraParam"]);
+    this._addExtraParam = $.extend(args["extraParam"], args["addExtraParam"] == null ? {} : args["addExtraParam"]);
     this._listener = {
         loadComplete : args["listener"]!=null && $.isFunction(args["listener"]["loadComplete"]) ? args["listener"]["loadComplete"] : null,
         // 事件监听器
@@ -155,8 +163,30 @@ function BaseTable(args) {
 
     this.reload = function(args) {
         if (args != null) {
-            if (args["postData"] != null) {
-                $(this._selector.table).jqGrid("setGridParam", {postData: args["postData"]});
+            if (args["extraParam"] != null) {
+                args["postExtraParam"] = $.extend(args["extraParam"], args["postExtraParam"] == null ? {} : args["postExtraParam"]);
+                args["editExtraParam"] = $.extend(args["extraParam"], args["editExtraParam"] == null ? {} : args["editExtraParam"]);
+                args["delExtraParam"] = $.extend(args["extraParam"], args["delExtraParam"] == null ? {} : args["delExtraParam"]);
+                args["addExtraParam"] = $.extend(args["extraParam"], args["addExtraParam"] == null ? {} : args["addExtraParam"]);
+            }
+            if (args["postExtraParam"] != null) {
+                this._postExtraParam = args["postExtraParam"];
+                $(this._selector.table).jqGrid("setGridParam", {postData: this._postExtraParam});
+            }
+            if (args["editExtraParam"] != null) {
+                this._editExtraParam = args["editExtraParam"];
+                var gridParam = $(this._selector.table).jqGrid("getGridParam");
+                gridParam.colModel[1].formatoptions.editOptions.editData = this._editExtraParam;
+                $(this._selector.table).jqGrid("setGridParam", gridParam);
+            }
+            if (args["delExtraParam"] != null) {
+                this._delExtraParam = args["delExtraParam"];
+                var gridParam = $(this._selector.table).jqGrid("getGridParam");
+                gridParam.colModel[1].formatoptions.delOptions.delData = this._delExtraParam;
+                $(this._selector.table).jqGrid("setGridParam", gridParam);
+            }
+            if (args["addExtraParam"] != null) {
+                this._addExtraParam = args["addExtraParam"];
             }
             if (args["name"] != null) {
                 this._tableName = args["name"];
@@ -191,7 +221,11 @@ function BaseTable(args) {
                 keys : true,
                 delOptions : {
                     recreateForm : true,
-                    beforeShowForm : this._beforeDeleteCallback
+                    beforeShowForm : this._beforeDeleteCallback,
+                    delData: this._delExtraParam
+                },
+                editOptions: {
+                    editData: this._editExtraParam
                 }
             }
         });
@@ -263,7 +297,7 @@ function BaseTable(args) {
                 altRows : true,
                 multiselect : true,
                 multiboxonly : true,
-                postData : this._postData,
+                postData : this._postExtraParam,
                 loadComplete : function (_this) {
                     return function(event) {
                         var table = this;
@@ -308,6 +342,27 @@ function BaseTable(args) {
         // make the grid get the
         // correct size
         // navButtons
+        var editExtraParam = {};
+        if (this._editExtraParam != null) {
+            for (var key in this._editExtraParam) {
+                editExtraParam[key] = function(_this) {
+                    return function () {
+                        return _this._editExtraParam[key];
+                    }
+                }(this);
+            }
+        }
+        var addExtraParam = {};
+        if (this._addExtraParam != null) {
+            for (var key in this._addExtraParam) {
+                addExtraParam[key] = function(_this, key) {
+                    return function () {
+                        console.log(_this._addExtraParam[key]);
+                        return _this._addExtraParam[key];
+                    }
+                }(this, key);
+            }
+        }
         this._$gridView.jqGrid(
             'navGrid',
             this._selector.nav,
@@ -333,7 +388,9 @@ function BaseTable(args) {
                         form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
                         _this._style_edit_form(form);
                     }
-                }(this)
+                }(this),
+                // TODO reload的时候没有更新该值
+                editData: editExtraParam
             },
             {   //new record form
                 //width: 700,
@@ -347,7 +404,9 @@ function BaseTable(args) {
                             .wrapInner('<div class="widget-header" />')
                         _this._style_edit_form(form);
                     }
-                }(this)
+                }(this),
+                // TODO reload的时候没有更新该值
+                editData: addExtraParam
             },
             { // delete record form
                 recreateForm : true,

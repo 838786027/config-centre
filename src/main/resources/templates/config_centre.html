@@ -5,18 +5,46 @@
 <head>
 <title>配置中心</title>
 </head>
-<div layout:fragment="pagePluginStyles"></div>
+<div layout:fragment="pagePluginStyles">
+    <link rel="stylesheet" th:href="@{${basePath}+'ace_res/assets/css/chosen.css'}" />
+</div>
 <div layout:fragment="inlineStyles"></div>
 
 <div layout:fragment="iframePage">
-	<div style="width:100px;height:100px;background: red"></div>
+	<div id="js_toolbar" class="row">
+        <div class="col-sm-3">
+            <label for="js_chosen-project-name">项目名</label><br />
+            <select id="js_chosen-project-name" class="form-control" data-placeholder="Choose a State...">
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <label for="js_chosen-project-version">版本</label><br />
+            <select id="js_chosen-project-version" class="form-control" data-placeholder="Choose a State...">
+            </select>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div id="js_table-config" class="col-sm-10"></div>
+    </div>
 </div>
 
 <div layout:fragment="pagePluginScripts">
+    <script th:src="@{${basePath}+'ace_res/assets/js/chosen.jquery.js'}"></script>
     <script th:src="@{${basePath}+'js/service/ProjectService.js'}"/>
+    <script th:src="@{${basePath}+'js/view/ConfigTable.js'}"/>
 </div>
 <div layout:fragment="inlineScripts">
 <script type="text/javascript">
+    var selector = {
+        projectName: "#js_chosen-project-name",
+        projectVersion: "#js_chosen-project-version",
+        configTable: "#js_table-config"
+    }
+    var projectService = new ProjectService();
+    var projectNameToVersions = new Object();
+    var configTable;
 	$(function () {
         init();
     });
@@ -24,19 +52,60 @@
 	function init() {
         initComponent();
         initEvent();
-        var projectService = new ProjectService();
-        projectService.list(function (data) {
-            alert("yes");
-            console.log(data);
+        projectService.list(function (projects) {
+            console.log(projects);
+            for (var i in projects) {
+                var project = projects[i];
+                if (projectNameToVersions[project.name] == null) {
+                    projectNameToVersions[project.name] = new Array();
+                    $(selector.projectName).append(
+                        DomUtil.new().opt({text : project.name, attrs : {value : project.name, selected : "selected"}})
+                    );
+                }
+                projectNameToVersions[project.name].push(project.version);
+            }
+            $(selector.projectName).trigger("chosen:updated");
+            $(selector.projectName).change();
         });
     }
 
     function initComponent() {
+        // 修改左侧菜单
+        menu.open("config_centre");
 
+        $(selector.projectName).chosen({
+            allow_single_deselect : true
+        });
+        $(selector.projectVersion).chosen({
+            allow_single_deselect : true
+        });
+
+        configTable = new ConfigTable({
+            containerSelector: selector.configTable
+        });
     }
 
     function initEvent() {
+        $(selector.projectName).change(function () {
+            var $this = $(this);
+            var projectName = $this.val();
+            var projectVersions = projectNameToVersions[projectName];
+            for (var i in projectVersions) {
+                var projectVersion = projectVersions[i];
+                $(selector.projectVersion).find(".option").remove();
+                $(selector.projectVersion).append(
+                    DomUtil.new().opt({text : projectVersion, attrs : {value : projectVersion, selected : "selected"}})
+                );
+            }
+            $(selector.projectVersion).trigger("chosen:updated");
+            $(selector.projectVersion).change();
+        });
 
+        $(selector.projectVersion).change(function () {
+            var projectName = $(selector.projectName).val();
+            var projectVersion = $(selector.projectVersion).val();
+            configTable.reloadByProject(projectName, projectVersion);
+        })
     }
 </script>
 </div>
